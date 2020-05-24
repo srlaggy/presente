@@ -11,11 +11,27 @@ void draw_level(const level *lvl){
             if(cell=='#'){
                 DrawRectangle(TILE_SIZE*x,TILE_SIZE*y,TILE_SIZE,TILE_SIZE,BROWN);
             }
+            //Draw powerups
+            if(cell=='H'){
+                Vector2 position = {TILE_SIZE*x,TILE_SIZE*y};
+                Rectangle f_health = {336 + lvl->frame_speed_health*48, 720, 48, 48};
+                DrawTextureRec(lvl->texture_pw, f_health, position, RAYWHITE);
+            }
+            if(cell=='I'){
+                Vector2 position = {TILE_SIZE*x,TILE_SIZE*y};
+                Rectangle f_ink = {480 + lvl->frame_ink*48, 384, 48, 48};
+                DrawTextureRec(lvl->texture_pw, f_ink, position, RAYWHITE);
+            }
+            if(cell=='S'){
+                Vector2 position = {TILE_SIZE*x,TILE_SIZE*y};
+                Rectangle f_speed = {lvl->frame_speed_health*48, 192, 48, 48};
+                DrawTextureRec(lvl->texture_pw, f_speed, position, RAYWHITE);
+            }
         }
     }
 }
 
-void draw_state(const level *lvl, const state *sta){
+void draw_state(const level *lvl, state *sta){
 
     // Initialize a camera to be used as drawing context
     Camera2D cam;
@@ -72,4 +88,11 @@ void draw_state(const level *lvl, const state *sta){
 
     // Stop drawing relative to the camera
     EndMode2D();
+
+    // Draw ink in position player if flag is activated
+    if(sta->flag_ink==1){
+        DrawTexture(lvl->texture_t, (800/2)-(lvl->texture_t.width/2), (600/2)-(lvl->texture_t.height/2), WHITE);
+        // Ink powerup causes effects for 10 secs
+        if((GetTime()-sta->timer_pw_ink)>10) sta->flag_ink=0;
+    }
 }

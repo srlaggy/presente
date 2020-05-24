@@ -13,6 +13,14 @@ int entity_physics(const level *lvl, entity *ent){
     char cell = level_get(lvl,tile_x,tile_y);
 
     if(cell=='#') return 1;
+    if(ent->flag_player==1){
+        // Delete powerups in cells level
+        lvl->cells[tile_y][tile_x]='.';
+        // Return powerup (4:Health, 3:Ink, 2:Speed)
+        if(cell=='H') return 4;
+        else if(cell=='I') return 3;
+        else if(cell=='S') return 2;
+    }
     return 0;
 }
 

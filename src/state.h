@@ -17,6 +17,7 @@
 #define BULLET_SPEED 16
 #define BULLET_RAD   5
 
+#define SPEED_MULTIPLIER 3
 
 // ==== PLAYER DEFINITION
 typedef struct {
@@ -63,6 +64,12 @@ typedef struct {
     // State of the controls, should be updated on each step.
     int button_state[N_BUTTONS];
     float aim_angle;
+    //Powerup influence states
+    int flag_ink;
+    int flag_speed;
+    // Powerup influence times
+    float timer_pw_speed;
+    float timer_pw_ink;
 
 } state;
 

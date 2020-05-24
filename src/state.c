@@ -44,6 +44,11 @@ void state_update(level *lvl, state *sta){
         // If something is being pressed, normalize the mov vector and multiply by the PLAYER_SPEED
         sta->pla.ent.vx = mov_x/mov_norm * PLAYER_SPEED;
         sta->pla.ent.vy = mov_y/mov_norm * PLAYER_SPEED;
+        // If player took the speed increase powerup, the speed will increase.
+        if(sta->flag_speed==1){
+            sta->pla.ent.vx *= SPEED_MULTIPLIER;
+            sta->pla.ent.vy *= SPEED_MULTIPLIER;
+        }
     }
 
     // == Make the player shoot
@@ -85,9 +90,37 @@ void state_update(level *lvl, state *sta){
     }
 
     // == Update entities
-    // Update player
-    entity_physics(lvl,&sta->pla.ent);
+    // Update player (flag_player=1 in case the player takes the powerup)
+    sta->pla.ent.flag_player=1;
+    int pw_cell=entity_physics(lvl,&sta->pla.ent);
+    sta->pla.ent.flag_player=0;
+
     if(sta->pla.ent.hp<=0) sta->pla.ent.dead=1;
+    // Behavior powerups (4:Health, 3:Ink, 2:Speed)
+    else{
+        // if cell is a health powerup so the player's health increases by half of PLAYER_HP
+        if(pw_cell==4) sta->pla.ent.hp+=PLAYER_HP/2;
+        // if cell is a ink powerup so flag is activated in draw_state.
+        else if(pw_cell==3){
+            sta->flag_ink=1;
+            sta->timer_pw_ink=GetTime();
+        }
+        // if player took the speed increase powerup so flag is activated in state_update.
+        else if(pw_cell==2){
+            // The max speed doesn't increase with 2 powerups at a time, in that case just seconds increases.
+            if(sta->flag_speed==0){
+                sta->flag_speed=1;
+                sta->timer_pw_speed=GetTime();
+            }
+            else if(sta->flag_speed==1){
+                sta->timer_pw_speed=GetTime();
+            }
+        }
+        // the speed increase powerup causes effects for 5 secs.
+        if((GetTime()-sta->timer_pw_speed)>5 && sta->flag_speed==1){
+            sta->flag_speed=0;
+        }
+    }
     // Update enemies
     for(int i=0;i<sta->n_enemies;i++){
         entity_physics(lvl,&sta->enemies[i].ent);

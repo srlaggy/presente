@@ -69,6 +69,45 @@ void level_fill_random(level *lvl, int wall_size){
     }
 }
 
+void level_powerups(level *lvl){
+    // Add health potions
+    for(int i=0; i<MAX_PW_HEALTH; i++){
+        int flag=0;
+        while(flag==0){
+            int pwx = rand()%(lvl->size_x);
+            int pwy = rand()%(lvl->size_y);
+            if(lvl->cells[pwy][pwx] == '.'){
+                lvl->cells[pwy][pwx] = 'H';
+                flag=1;
+            }
+        }
+    }
+    //Add ink
+    for(int j=0; j<MAX_PW_INK; j++){
+        int flag=0;
+        while(flag==0){
+            int pwx = rand()%(lvl->size_x);
+            int pwy = rand()%(lvl->size_y);
+            if(lvl->cells[pwy][pwx] == '.'){
+                lvl->cells[pwy][pwx] = 'I';
+                flag=1;
+            }
+        }
+    }
+    //Add speed increase
+    for(int k=0; k<MAX_PW_SPEED; k++){
+        int flag=0;
+        while(flag==0){
+            int pwx = rand()%(lvl->size_x);
+            int pwy = rand()%(lvl->size_y);
+            if(lvl->cells[pwy][pwx] == '.'){
+                lvl->cells[pwy][pwx] = 'S';
+                flag=1;
+            }
+        }
+    }
+}
+
 // Free level memory
 void level_free(level *lvl){
     // Free each row first
